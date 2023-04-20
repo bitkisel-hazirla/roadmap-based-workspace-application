@@ -1,13 +1,11 @@
 import React from 'react';
 import { AuthButton } from './AuthButton';
+import { signIn, signUp } from '../../utils/constant/authSection';
 
 function AuthSection({ currentPage, slideDirection, handleClick }) {
-  const [heading, text, buttonText] =
-    currentPage === 'signup'
-      ? ['Hello Friend!', 'Aldready have an account? Sign In then', 'Sign In']
-      : ['Welcome Back!', 'Not have an account? Sign Up then', 'Sign Up'];
+  const { title, description, buttonText } = currentPage === 'signup' ? signUp : signIn;
 
-  const directionClass = slideDirection === 'left' ? 'slide-left' : 'slide-right';
+  const directionClass = `slide-${slideDirection}`;
 
   return (
     <div
@@ -18,8 +16,8 @@ function AuthSection({ currentPage, slideDirection, handleClick }) {
       <div className="circle third absolute rounded-full"></div>
       <div className="circle fourth absolute rounded-full"></div>
       <div className="container flex-col items-center text-center justify-center text-white mb-20">
-        <h2 className="text-5xl mb-8">{heading}</h2>
-        <p className="mb-8">{text}</p>
+        <h2 className="text-5xl mb-8">{title}</h2>
+        <p className="mb-8">{description}</p>
         <AuthButton theme="primary" onClick={handleClick}>
           {buttonText}
         </AuthButton>
