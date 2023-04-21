@@ -1,3 +1,106 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;500;700&display=swap');
+
+.checkbox-input:checked ~ .checkbox-icon {
+  background-color: #333;
+}
+
+.checkbox-input:checked ~ .checkbox-icon::after {
+  content: '\2713';
+  display: block;
+  color: #fff;
+  font-size: 14px;
+  text-align: center;
+  line-height: 20px;
+}
+
+.auth-section {
+  background-color: #597d9d;
+
+  .circle {
+    background-color: #e6f2ff;
+  }
+
+  .first {
+    top: 5%;
+    left: 5%;
+    height: 80px;
+    width: 80px;
+  }
+
+  .second {
+    top: 13%;
+    left: 20%;
+    height: 25px;
+    width: 25px;
+  }
+
+  .third {
+    right: 12%;
+    bottom: 16%;
+    height: 148px;
+    width: 148px;
+  }
+
+  .fourth {
+    left: 0;
+    bottom: -222px;
+    width: 428px;
+    height: 443px;
+  }
+
+  @media (max-width: 1800px) {
+    .third {
+      width: 108px;
+      height: 108px;
+    }
+    .fourth {
+      bottom: -181px;
+      width: 362px;
+      height: 362px;
+    }
+  }
+
+  .container {
+    max-width: 361px;
+
+    h2 {
+      font-size: 48px;
+      line-height: 68px;
+    }
+
+    p {
+      font-size: 22px;
+      line-height: 44px;
+      font-weight: 300;
+    }
+  }
+}
+
+.authPage {
+  font-family: 'Comfortaa', Arial, sans-serif;
+  transition: all 0.5s ease;
+
+  .login-form {
+    height: 60%;
+    width: 672px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    h1 {
+      color: #597d9d;
+      font-size: 48px;
+    }
+  }
+
+  .form-container {
+    position: relative;
+    transform: translateX(0%);
+    transition: all 0.5s ease;
+  }
+}
