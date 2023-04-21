@@ -1,6 +1,5 @@
 import React from 'react';
 import { AuthButton } from '../../components/UI/AuthButton';
-import { DateInput } from '../../components/UI/DateInput';
 import { PasswordInput } from '../../components/UI/PasswordInput';
 
 function SignUp() {
@@ -34,14 +33,14 @@ function SignUp() {
             required
           />
           <PasswordInput className={'mb-8'}/>
-          <DateInput />
-          {/* <input
+          <input
             className="w-full py-3 px-5 border border-gray-500 rounded"
-            type="text"
-            id="email"
-            name="email"
-            placeholder="Birthday"
-          /> */}
+            type="date"
+            id="date"
+            name="date"
+            max="2999-12-30"
+            required
+          />
         </div>
         <AuthButton theme="secondary">Sign Up</AuthButton>
       </form>
