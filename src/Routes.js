@@ -1,18 +1,33 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { Home } from './pages/Home';
+import { Authentication } from './pages/Authentication';
+import { Roadmap } from './pages/Roadmap';
+import { RootLayout } from './pages/RootLayout';
+import { Table } from './components/Table';
 
 const router = createBrowserRouter([
-    {
-        path: '/',
-        element: <Home />,
-        children: [
-            // { index: true, element: <Dashboard /> },
-            // { path: '/timer', element: <Timer /> },
-            // { path: '/todoList', element: <ToDoList /> },
-            // { path: '/profile', element: <Profile /> },
-            // { path: '/suggestions', element: <Suggestions /> }
-        ]
-    }
+  {
+    path: '/',
+    element: <RootLayout />,
+    children: [
+      {
+        index: true,
+        element: <Home />
+      },
+      {
+        path: 'table',
+        element: <Table />
+      }
+    ]
+  },
+  {
+    path: '/authentication',
+    element: <Authentication />
+  },
+  {
+    path: '/roadmap',
+    element: <Roadmap />
+  }
 ]);
 
 export default router;
