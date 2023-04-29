@@ -110,7 +110,7 @@ exports.login = async (req, res) => {
 
     return res.status(200).send({
       token: token,
-      id: user.id
+      id: user.id.toString()
     });
   });
 };
@@ -140,20 +140,30 @@ exports.updateById = (req, res) => {
   });
 };
 
-exports.delete = (req, res) => {
-  User.delete(req.params.id, (err, data) => {
+exports.deleteLoggedUser = (req, res) => {
+  const userId = req.userId;
+
+  User.delete(userId, (err, data) => {
     if (err) {
-      if (err.kind === 'not_found') {
-        res.status(404).send({
-          message: `There is no user with id ${req.params.id}`
-        });
-        return;
-      }
       res.status(500).send({
         message: err.message
       });
       return;
     }
     res.send({ message: 'User is deleted successfully.' });
+  });
+};
+
+exports.getLoggedUser = (req, res) => {
+  const userId = req.userId;
+
+  User.findById(userId, (err, data) => {
+    if (err) {
+      res.status(500).send({
+        message: err.message
+      });
+      return;
+    }
+    res.send(data);
   });
 };

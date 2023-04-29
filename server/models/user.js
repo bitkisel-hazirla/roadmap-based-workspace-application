@@ -64,8 +64,14 @@ User.findById = (id, result) => {
     }
 
     if (res.length) {
-      console.log('found the user: ', res[0]);
-      result(null, res[0]);
+      const user = {
+        ...res[0],
+        id: res[0].id.toString('utf-8')
+      };
+
+      delete user.password;
+
+      result(null, user);
       return;
     }
 
