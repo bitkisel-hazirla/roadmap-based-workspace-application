@@ -132,6 +132,21 @@ td {
   }
 }
 
+
+.roadmap-container{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.card-icon{
+  height: 70%;
+  width: 70%;
+}
+
+.field-title,.roadmap-card, .subItem-title {
+  font-family: 'Comfortaa', Arial, sans-serif;
+}
+
 .bg-247 {
   background-color: #f7f7f7;
 }
@@ -141,4 +156,33 @@ td {
 }
 .bg-260 {
   background-color: rgb(230, 225, 236);
+}
+
+.progress-bar {
+  font-family: 'Comfortaa', Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  color: #5E5E5E;
+  background: 
+    radial-gradient(closest-side, rgb(224 242 254) 79%, transparent 80% 100%),
+    conic-gradient(#6DA5D8 85%, #D1D5DB 0);    
+  
+}
+
+
+.subItem-title, .subItem-subTitle{
+  color: #5E5E5E;
+}
+
+.bottom-navigation{
+  position: relative;
+  bottom: 25px;
+  left: 30px;
+ 
+
+ 
 }
