@@ -2,7 +2,7 @@ import React from 'react';
 import { AuthButton } from './AuthButton';
 import { signIn, signUp } from '../../utils/constants/authSection';
 
-function AuthSection({ currentPage, slideDirection, handleClick }) {
+const AuthSection = ({ currentPage, slideDirection, handleClick }) => {
   const { title, description, buttonText } = currentPage === 'signup' ? signUp : signIn;
 
   const directionClass = `slide-${slideDirection}`;

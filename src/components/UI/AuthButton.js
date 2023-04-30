@@ -1,6 +1,6 @@
 import React from 'react';
 
-function AuthButton({ theme = 'primary', children, onClick, className }) {
+const AuthButton = ({ theme = 'primary', children, onClick, className }) => {
   const [bgColor, textColor] = theme === 'primary' ? ['#fff', '#597d9d'] : ['#597d9d', '#fff'];
 
   return (

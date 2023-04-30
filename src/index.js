@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import axios from 'axios';
 // import { configureStore } from '@reduxjs/toolkit';
 // import createSagaMiddleware from 'redux-saga';
 // import { Provider } from 'react-redux';
 import './assets/index.scss';
 import App from './App';
-import axios from 'axios';
 
 // import userReducer from './reducers/user';
 // import rootSaga from './sagas/rootSaga';

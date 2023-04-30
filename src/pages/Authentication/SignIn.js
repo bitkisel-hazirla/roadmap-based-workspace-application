@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { AuthButton } from '../../components/UI/AuthButton';
-import { PasswordInput } from '../../components/UI/PasswordInput';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 
-function SignIn() {
+import { PasswordInput } from '../../components/UI/PasswordInput';
+import { AuthButton } from '../../components/UI/AuthButton';
+
+const SignIn = () => {
   const [formValues, setFormValues] = useState({
     username: '',
     password: '',
@@ -64,7 +66,7 @@ function SignIn() {
               <span className="checkbox-icon inline-block w-5 h-5 mr-2.5 rounded border border-gray-500 rounded"></span>
               Remember me
             </label>
-            <a href="#">Forgot your password?</a>
+            <Link to="/">Forgot your password?</Link>
           </div>
           <AuthButton className="signBtn w-full rounded mt-12" theme="secondary">
             Sign In

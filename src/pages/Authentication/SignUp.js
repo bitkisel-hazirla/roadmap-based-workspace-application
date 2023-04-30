@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { AuthButton } from '../../components/UI/AuthButton';
-import { PasswordInput } from '../../components/UI/PasswordInput';
 import axios from 'axios';
 
-function SignUp() {
+import { AuthButton } from '../../components/UI/AuthButton';
+import { PasswordInput } from '../../components/UI/PasswordInput';
+
+const SignUp = () => {
   const [formValues, setFormValues] = useState({
     name: '',
     username: '',
@@ -89,6 +90,6 @@ function SignUp() {
       </form>
     </div>
   );
-}
+};
 
 export { SignUp };
