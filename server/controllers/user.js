@@ -1,6 +1,7 @@
-const User = require('../models/user.js');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const User = require('../models/user.js');
+const { sendWelcomeEmail } = require('../util/mailManager.js');
 
 exports.create = async (req, res) => {
   if (!req.body) {
@@ -9,14 +10,14 @@ exports.create = async (req, res) => {
 
   User.findByEmail(req.body.email, (err, data) => {
     if (data) {
-      return res.status(500).send({
+      return res.status(409).send({
         message: 'The email is in use.'
       });
     }
 
     User.findByUsername(req.body.username, async (err, data) => {
       if (data) {
-        return res.status(500).send({
+        return res.status(409).send({
           message: 'The username is in use.'
         });
       }
@@ -30,6 +31,11 @@ exports.create = async (req, res) => {
         password: hashedPass,
         date_of_birth: req.body.date_of_birth
       });
+      try {
+        sendWelcomeEmail(user.email, user.name);
+      } catch (e) {
+        console.log(e);
+      }
 
       User.create(user, (err, data) => {
         if (err) {
