@@ -1,5 +1,5 @@
-const { pool } = require('../util/database');
 const crypto = require('crypto-js');
+const { pool } = require('../util/database');
 
 const User = function (user) {
   this.email = user.email;
