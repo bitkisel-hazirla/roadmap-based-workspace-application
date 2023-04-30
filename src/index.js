@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom/client';
 // import { Provider } from 'react-redux';
 import './assets/index.scss';
 import App from './App';
+import axios from 'axios';
 
 // import userReducer from './reducers/user';
 // import rootSaga from './sagas/rootSaga';
@@ -22,11 +23,12 @@ import App from './App';
 // } catch (e) {
 //     console.log(e);
 // }
+axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   // TODO :: pass store to provider
   // <Provider >
-    <App />
+  <App />
   // </Provider>
 );

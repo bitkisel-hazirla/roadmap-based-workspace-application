@@ -1,6 +1,6 @@
 import React from 'react';
 import { AuthButton } from './AuthButton';
-import { signIn, signUp } from '../../utils/constant/authSection';
+import { signIn, signUp } from '../../utils/constants/authSection';
 
 function AuthSection({ currentPage, slideDirection, handleClick }) {
   const { title, description, buttonText } = currentPage === 'signup' ? signUp : signIn;
@@ -18,7 +18,7 @@ function AuthSection({ currentPage, slideDirection, handleClick }) {
       <div className="container flex-col items-center text-center justify-center text-white mb-20">
         <h2 className="text-5xl mb-8">{title}</h2>
         <p className="mb-8">{description}</p>
-        <AuthButton theme="primary" onClick={handleClick}>
+        <AuthButton theme="primary" className="rounded-2xl" onClick={handleClick}>
           {buttonText}
         </AuthButton>
       </div>

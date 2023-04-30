@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
-function PasswordInput({className}) {
+function PasswordInput({ value, onChange, className }) {
   const [showPassword, setShowPassword] = useState(false);
 
   function togglePasswordVisibility(e) {
@@ -16,6 +16,8 @@ function PasswordInput({className}) {
         type={showPassword ? 'text' : 'password'}
         id="password"
         name="password"
+        value={value}
+        onChange={onChange}
         placeholder="Password"
         required
       />
