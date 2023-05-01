@@ -1,6 +1,7 @@
-const User = require('../models/user.js');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const User = require('../models/user.js');
+const { sendWelcomeEmail } = require('../util/mailManager.js');
 
 exports.create = async (req, res) => {
   if (!req.body) {
@@ -9,14 +10,14 @@ exports.create = async (req, res) => {
 
   User.findByEmail(req.body.email, (err, data) => {
     if (data) {
-      return res.status(500).send({
+      return res.status(409).send({
         message: 'The email is in use.'
       });
     }
 
     User.findByUsername(req.body.username, async (err, data) => {
       if (data) {
-        return res.status(500).send({
+        return res.status(409).send({
           message: 'The username is in use.'
         });
       }
@@ -30,6 +31,12 @@ exports.create = async (req, res) => {
         password: hashedPass,
         date_of_birth: req.body.date_of_birth
       });
+      
+      try {
+        sendWelcomeEmail(user.email, user.name);
+      } catch (e) {
+        console.log(e);
+      }
 
       User.create(user, (err, data) => {
         if (err) {
@@ -110,7 +117,7 @@ exports.login = async (req, res) => {
 
     return res.status(200).send({
       token: token,
-      id: user.id
+      id: user.id.toString()
     });
   });
 };
@@ -139,21 +146,30 @@ exports.updateById = (req, res) => {
     res.send(data);
   });
 };
+exports.deleteLoggedUser = (req, res) => {
+  const userId = req.userId;
 
-exports.delete = (req, res) => {
-  User.delete(req.params.id, (err, data) => {
+  User.delete(userId, (err, data) => {
     if (err) {
-      if (err.kind === 'not_found') {
-        res.status(404).send({
-          message: `There is no user with id ${req.params.id}`
-        });
-        return;
-      }
       res.status(500).send({
         message: err.message
       });
       return;
     }
     res.send({ message: 'User is deleted successfully.' });
+  });
+};
+
+exports.getLoggedUser = (req, res) => {
+  const userId = req.userId;
+
+  User.findById(userId, (err, data) => {
+    if (err) {
+      res.status(500).send({
+        message: err.message
+      });
+      return;
+    }
+    res.send(data);
   });
 };
