@@ -4,6 +4,7 @@ import { Authentication } from './pages/Authentication';
 import { RootLayout } from './pages/RootLayout';
 import { Table } from './components/Table';
 import { Timer } from './pages/Timer';
+import { Roadmap } from './pages/Roadmap';
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
   {
     path: '/authentication',
     element: <Authentication />
+  },
+  {
+    path: '/roadmap',
+    element: <Roadmap />
   }
 ]);
 
