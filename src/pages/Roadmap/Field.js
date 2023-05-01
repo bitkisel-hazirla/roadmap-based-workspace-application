@@ -1,17 +1,16 @@
 import React from 'react';
-import { FiBookOpen } from 'react-icons/fi';
-import { FiSquare } from 'react-icons/fi';
-import { roadmap } from '../../utils/constants/roadmap';
 import { IconContext } from 'react-icons';
-import { TfiAngleDoubleLeft } from "react-icons/tfi";
+import { FiBookOpen, FiSquare } from 'react-icons/fi';
+import { TfiAngleDoubleLeft } from 'react-icons/tfi';
+import { roadmap } from '../../utils/constants/roadmap';
 
-function Field() {
+export const Field = () => {
   return (
     <>
-      <div className="flex flex-col min-h-screen justify-center items-center gap-4 p-4">
+      <div className="concepts flex flex-col min-h-screen justify-center items-center gap-4 p-4">
         <div className="flex justify-around items-center bg-sky-100/100 rounded-2xl p-4 gap-4">
-          <div className="progress-bar">
-            <p className='font-bold text-lg'>80%</p>
+          <div className="progress-bar flex justify-center items-center w-24 h-24 rounded-full">
+            <p className="font-bold text-lg">80%</p>
           </div>
           <h1 className="text-4xl w-60 h-20 text-center subItem-title font-bold">
             {roadmap[0].subItems.title}
@@ -35,12 +34,9 @@ function Field() {
           })}
         </div>
       </div>
-      <IconContext.Provider value={{className: 'bottom-navigation' }}>
-      <TfiAngleDoubleLeft/>
+      <IconContext.Provider value={{ className: 'bottom-navigation relative bottom-8 left-20' }}>
+        <TfiAngleDoubleLeft />
       </IconContext.Provider>
-
     </>
   );
-}
-
-export default Field;
+};

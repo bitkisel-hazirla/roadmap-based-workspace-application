@@ -1,11 +1,13 @@
-import { FcBinoculars } from 'react-icons/fc';
-import { FcCommandLine } from 'react-icons/fc';
-import { FcParallelTasks } from 'react-icons/fc';
-import { FcServices } from 'react-icons/fc';
-import { FcBrokenLink } from 'react-icons/fc';
-import { FcWorkflow } from 'react-icons/fc';
-import { FcCircuit } from 'react-icons/fc';
-import { FcBiotech } from 'react-icons/fc';
+import {
+  FcBinoculars,
+  FcCommandLine,
+  FcParallelTasks,
+  FcServices,
+  FcBrokenLink,
+  FcWorkflow,
+  FcCircuit,
+  FcBiotech
+} from 'react-icons/fc';
 
 export const roadmap = [
   {
@@ -43,9 +45,7 @@ export const roadmap = [
         {
           title: 'Responsive Design',
           checked: false
-        },
-        
-        
+        }
       ]
     },
     index: 1
