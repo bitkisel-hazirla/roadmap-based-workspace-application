@@ -31,6 +31,7 @@ exports.create = async (req, res) => {
         password: hashedPass,
         date_of_birth: req.body.date_of_birth
       });
+      
       try {
         sendWelcomeEmail(user.email, user.name);
       } catch (e) {
@@ -145,7 +146,6 @@ exports.updateById = (req, res) => {
     res.send(data);
   });
 };
-
 exports.deleteLoggedUser = (req, res) => {
   const userId = req.userId;
 

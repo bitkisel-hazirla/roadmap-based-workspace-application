@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import axios from 'axios';
 // import { configureStore } from '@reduxjs/toolkit';
 // import createSagaMiddleware from 'redux-saga';
 // import { Provider } from 'react-redux';
@@ -22,11 +23,12 @@ import App from './App';
 // } catch (e) {
 //     console.log(e);
 // }
+axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   // TODO :: pass store to provider
   // <Provider >
-    <App />
+  <App />
   // </Provider>
 );

@@ -3,7 +3,7 @@ import { SignIn } from './SignIn';
 import { SignUp } from './SignUp';
 import { AuthSection } from '../../components/UI/AuthSection';
 
-function Authentication() {
+const Authentication = () => {
   const [currentPage, setCurrentPage] = useState('signin');
 
   const handlePageChange = () => {
