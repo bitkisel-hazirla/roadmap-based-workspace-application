@@ -3,11 +3,11 @@ import { Sidebar } from '../components/common/Sidebar';
 
 export const RootLayout = () => {
   return (
-    <>
-      <main>
+    <div style={{backgroundColor:'#DEE7FF'}} className='flex h-full'>
+      <Sidebar />
+      <main className='w-full h-full'>
         <Outlet />
       </main>
-      <Sidebar />
-    </>
+    </div>
   );
 };
