@@ -1,9 +1,9 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { Home } from './pages/Home';
 import { Authentication } from './pages/Authentication';
-import { Roadmap } from './pages/Roadmap';
 import { RootLayout } from './pages/RootLayout';
 import { Table } from './components/Table';
+import { Timer } from './pages/Timer';
 
 const router = createBrowserRouter([
   {
@@ -17,16 +17,16 @@ const router = createBrowserRouter([
       {
         path: 'table',
         element: <Table />
+      },
+      {
+        path: 'timer',
+        element: <Timer />
       }
     ]
   },
   {
     path: '/authentication',
     element: <Authentication />
-  },
-  {
-    path: '/roadmap',
-    element: <Roadmap />
   }
 ]);
 
