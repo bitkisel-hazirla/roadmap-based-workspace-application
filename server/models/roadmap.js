@@ -4,6 +4,7 @@ const crypto = require('crypto-js');
 const Roadmap = function (roadmap) {
   this.title = roadmap.title;
   this.description = roadmap.description;
+  this.parent_id = roadmap.parent_id;
 };
 
 Roadmap.create = async (newRoadmap, result) => {
@@ -27,7 +28,17 @@ Roadmap.getAll = (result) => {
       return;
     }
 
-    result(null, res);
+    const data = res.map((roadmap) => {
+      roadmap.id = roadmap.id.toString('utf8');
+      if (roadmap.parent_id) {
+        roadmap.parent_id = roadmap.parent_id.toString('utf8');
+      }
+
+      return roadmap;
+    });
+
+    const count = res.length;
+    return result(null, { count, data });
   });
 };
 
@@ -52,6 +63,29 @@ Roadmap.findById = (id, result) => {
     }
 
     result({ kind: 'not_found' }, null);
+  });
+};
+
+Roadmap.findByParentId = (parent_id, result) => {
+  const idBuffer = Buffer.alloc(18, parent_id, 'utf-8');
+  pool.query('SELECT * FROM roadmaps WHERE parent_id = ?', idBuffer, (err, res) => {
+    if (err) {
+      console.log('error: ', err);
+      result(err, null);
+      return;
+    }
+    if (res.length) {
+      const data = res.map((roadmap) => {
+        roadmap.id = roadmap.id.toString('utf8');
+
+        roadmap.parent_id = roadmap.parent_id.toString('utf8');
+
+        return roadmap;
+      });
+
+      const count = res.length;
+      return result(null, { count, data });
+    }
   });
 };
 

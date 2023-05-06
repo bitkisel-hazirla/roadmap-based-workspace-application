@@ -7,7 +7,8 @@ exports.create = async (req, res) => {
 
   const roadmap = new Roadmap({
     title: req.body.title,
-    description: req.body.description
+    description: req.body.description,
+    parent_id: req.body.parent_id
   });
 
   Roadmap.create(roadmap, (err, data) => {
@@ -51,6 +52,24 @@ exports.findById = (req, res) => {
   });
 };
 
+exports.findByParentId = (req, res) => {
+  Roadmap.findByParentId(req.params.parent_id, (err, data) => {
+    if (err) {
+      if (err.kind === 'not_found') {
+        res.status(400).send({
+          message: `There is no roadmap with parent id ${req.params.parent_id}`
+        });
+        return;
+      }
+      res.status(500).send({
+        message: err.message
+      });
+      return;
+    }
+    res.send(data);
+  });
+};
+
 exports.delete = (req, res) => {
   Roadmap.delete(req.params.id, (err, data) => {
     if (err) {
@@ -65,6 +84,6 @@ exports.delete = (req, res) => {
       });
       return;
     }
-    res.status(200).send({message: 'Successfully deleted.' });
+    res.status(200).send({ message: 'Successfully deleted.' });
   });
 };
