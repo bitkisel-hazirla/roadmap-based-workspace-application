@@ -27,7 +27,11 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "e2e:test" : "npx playwright test",
+    "e2e:test:debug" : "npx playwright test --debug",
+    "e2e:test:headed" : "npx playwright test --headed",
+    "e2e:test:custom": "npx playwright test example"
   },
   "eslintConfig": {
     "extends": [
@@ -48,6 +52,7 @@
     ]
   },
   "devDependencies": {
+    "@playwright/test": "^1.33.0",
     "eslint": "^8.40.0",
     "eslint-config-react-app": "^7.0.1",
     "eslint-config-standard": "^17.0.0",
