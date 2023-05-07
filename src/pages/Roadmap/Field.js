@@ -18,6 +18,7 @@ export const Field = () => {
         </div>
         <div className="flex flex-col items-center  w-5/12 bg-sky-100/50 rounded-2xl p-16">
           {roadmap[0].subItems.subTitles.map((item) => {
+            // TODO:: we need to add key
             return (
               <div className="flex h-20 w-full items-center text-2xl uppercase justify-between">
                 <div className="flex items-center gap-4">

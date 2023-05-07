@@ -28,7 +28,7 @@ exports.getByUserId = async (req, res) => {
     if (err) {
       if (err.kind === 'not_found') {
         return res.status(404).send({
-          message: `The user has no period record.`
+          message: 'The user has no period record.'
         });
       }
 
@@ -48,7 +48,7 @@ exports.getByDate = async (req, res) => {
     if (err) {
       if (err.kind === 'not_found') {
         return res.status(404).send({
-          message: `The user has no period record at that date.`
+          message: 'The user has no period record at that date.'
         });
       }
 
@@ -68,7 +68,7 @@ exports.getLatestPeriods = async (req, res) => {
     if (err) {
       if (err.kind === 'not_found') {
         return res.status(404).send({
-          message: `The user has no period record between provided dates.`
+          message: 'The user has no period record between provided dates.'
         });
       }
       return res.status(500).send({

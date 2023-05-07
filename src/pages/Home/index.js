@@ -1,6 +1,6 @@
 import landing from '../../assets/images/landing.jpeg';
-import landing2 from '../../assets/images/landing2.jpeg';
-import landing3 from '../../assets/images/landing3.jpeg';
+import landing2 from '../../assets/images/landing2.jpg';
+import landing3 from '../../assets/images/landing3.png';
 import { AuthButton } from '../../components/UI/AuthButton';
 import { Link } from 'react-scroll';
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { Stats } from '../../components/timer/Stats';
 import { Timer as Clock } from '../../components/timer/Timer';
@@ -61,7 +61,7 @@ export const Timer = () => {
         <div style={{ border: '2px solid #2F56B8' }} className="flex rounded-xl mt-20 h-12 w-96">
           <button
             onClick={handleButtonClick}
-            style={{ borderColor: '#2F56B8', backgroundColor: backgroundColor }}
+            style={{ borderColor: '#2F56B8', backgroundColor }}
             className={`rounded-xl w-full ${isTimer ? 'border-r-2' : null}`}
           >
             Timer

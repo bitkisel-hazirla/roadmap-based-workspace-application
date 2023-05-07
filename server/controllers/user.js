@@ -31,7 +31,7 @@ exports.create = async (req, res) => {
         password: hashedPass,
         date_of_birth: req.body.date_of_birth
       });
-      
+
       try {
         sendWelcomeEmail(user.email, user.name);
       } catch (e) {
@@ -88,7 +88,7 @@ exports.login = async (req, res) => {
     if (err) {
       if (err.kind === 'not_found') {
         res.status(404).send({
-          message: `The email or the password is incorrect!`
+          message: 'The email or the password is incorrect!'
         });
         return;
       }
@@ -116,7 +116,7 @@ exports.login = async (req, res) => {
     );
 
     return res.status(200).send({
-      token: token,
+      token,
       id: user.id.toString()
     });
   });

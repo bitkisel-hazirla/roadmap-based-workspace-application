@@ -65,6 +65,6 @@ exports.delete = (req, res) => {
       });
       return;
     }
-    res.status(200).send({message: 'Successfully deleted.' });
+    res.status(200).send({ message: 'Successfully deleted.' });
   });
 };

@@ -1,3 +1,4 @@
+import React from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import { Home } from './pages/Home';
 import { Authentication } from './pages/Authentication';
@@ -12,9 +13,9 @@ const router = createBrowserRouter([
     element: <RootLayout />,
     children: [
       {
-        path:'/',
-        element:<Home/>,
-        
+        path: '/',
+        element: <Home/>
+
       },
       {
         path: 'tasks',
@@ -27,7 +28,7 @@ const router = createBrowserRouter([
     ]
   },
   {
-    path:'/',
+    path: '/',
     element: <Home/>
   },
   {
