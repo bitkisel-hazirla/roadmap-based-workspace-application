@@ -7,126 +7,126 @@ const Period = function (period) {
   this.user_id = period.user_id;
 };
 
-Period.create = async (newPeriod, result) => {
+Period.create = async (newPeriod) => {
   const id = crypto.lib.WordArray.random(16).toString();
   const period = { ...newPeriod, id };
-  pool.query('INSERT INTO periods SET ?', period, (err, res) => {
-    if (err) return result(err, null);
-    console.log('created period: ', { id, ...newPeriod });
-    result(null, { id, ...newPeriod });
-  });
+  try {
+    await pool.query('INSERT INTO periods SET ?', period);
+    return { id, ...newPeriod };
+  } catch (err) {
+    console.log('error: ', err);
+    throw err;
+  }
 };
 
-Period.findByUserId = (user_id, result) => {
+Period.findByUserId = async (user_id) => {
   const idBuffer = Buffer.alloc(18, user_id, 'utf-8');
 
-  pool.query('SELECT * FROM periods WHERE user_id = ?', idBuffer, (err, res) => {
-    if (err) {
-      return result(err, null);
-    }
-    if (res.length) {
-      console.log('found the period(s): ', res);
-      const data = res.map((period) => {
+  try {
+    const [rows] = await pool.execute('SELECT * FROM periods WHERE user_id = ?', [idBuffer]);
+    if (rows.length) {
+      const data = rows.map((period) => {
         period.id = period.id.toString('utf8');
         period.user_id = period.user_id.toString('utf8');
         return period;
       });
-      const count = res.length;
-      return result(null, { count, data });
+      const count = rows.length;
+      return { count, data };
     }
-
-    result({ kind: 'not_found' }, null);
-  });
+    return { kind: 'not_found' };
+  } catch (err) {
+    console.log('error: ', err);
+    throw err;
+  }
 };
 
-Period.findByDate = (user_id, date, result) => {
+Period.findByDate = async (user_id, date) => {
   const idBuffer = Buffer.alloc(18, user_id, 'utf-8');
 
-  pool.query(
-    'SELECT * FROM periods WHERE user_id = ? AND date = ?',
-    [idBuffer, date],
-    (err, res) => {
-      if (err) {
-        return result(err, null);
-      }
-      if (res.length) {
-        console.log('found the period(s): ', res);
-        const data = res.map((period) => {
-          period.id = period.id.toString('utf8');
-          period.user_id = period.user_id.toString('utf8');
-          return period;
-        });
-        const count = res.length;
-        return result(null, { count, data });
-      }
-
-      result({ kind: 'not_found' }, null);
+  try {
+    const [rows] = await pool.execute('SELECT * FROM periods WHERE user_id = ? AND date = ?', [
+      idBuffer,
+      date
+    ]);
+    if (rows.length) {
+      const data = rows.map((period) => {
+        period.id = period.id.toString('utf8');
+        period.user_id = period.user_id.toString('utf8');
+        return period;
+      });
+      const count = rows.length;
+      return { count, data };
     }
-  );
+
+    throw { kind: 'not_found' };
+  } catch (err) {
+    console.log('error: ', err);
+    throw err;
+  }
 };
 
-Period.findLatestPeriods = (user_id, daysBack, result) => {
+Period.findLatestPeriods = async (user_id, daysBack) => {
   const today = new Date();
   const startDate = new Date(today.getTime() - daysBack * 24 * 60 * 60 * 1000);
   const idBuffer = Buffer.alloc(18, user_id, 'utf-8');
 
-  pool.query(
-    'SELECT * FROM periods WHERE user_id = ? AND date BETWEEN ? AND ?',
-    [idBuffer, startDate, today],
-    (err, res) => {
-      if (err) {
-        return result(err, null);
-      }
-      if (res.length) {
-        console.log('found the period(s): ', res);
-        const data = res.map((period) => {
-          period.id = period.id.toString('utf8');
-          period.user_id = period.user_id.toString('utf8');
-          return period;
-        });
-        const count = res.length;
-        return result(null, { count, data });
-      }
+  try {
+    const [rows] = await pool.execute(
+      'SELECT * FROM periods WHERE user_id = ? AND date BETWEEN ? AND ?',
+      [idBuffer, startDate, today]
+    );
 
-      result({ kind: 'not_found' }, null);
+    if (rows.length) {
+      const data = rows.map((period) => {
+        period.id = period.id.toString('utf8');
+        period.user_id = period.user_id.toString('utf8');
+        return period;
+      });
+      const count = rows.length;
+      return { count, data };
     }
-  );
+    throw { kind: 'not_found' };
+  } catch (err) {
+    console.log('error: ', err);
+    throw err;
+  }
 };
 
-Period.update = (user_id, updatedPeriod, result) => {
+Period.update = async (user_id, updatedPeriod) => {
   const idBuffer = Buffer.alloc(18, user_id, 'utf-8');
   const today = new Date().toISOString().slice(0, 10);
 
-  pool.query(
-    'UPDATE periods SET period = ? WHERE user_id = ? AND date = ?',
-    [updatedPeriod, idBuffer, today],
-    (err, res) => {
-      if (err) return result(err, null);
-      if (res.affectedRows == 0) {
-        return result({ kind: 'not_found' }, null);
-      }
-      console.log(`updated period with user_id ${user_id} and date ${today}: `, {
-        ...updatedPeriod,
-        user_id,
-        today
-      });
-      result(null, { ...updatedPeriod, user_id, today });
+  try {
+    const [rows] = await pool.execute(
+      'UPDATE periods SET period = ? WHERE user_id = ? AND date = ?',
+      [updatedPeriod, idBuffer, today]
+    );
+
+    if (rows.affectedRows == 0) {
+      throw { kind: 'not_found' };
     }
-  );
+    return { ...updatedPeriod, user_id, today };
+  } catch (err) {
+    console.log('error: ', err);
+    throw err;
+  }
 };
 
-Period.delete = (user_id, date, result) => {
+Period.delete = async (user_id, date) => {
   const idBuffer = Buffer.alloc(18, user_id, 'utf-8');
 
-  pool.query('DELETE FROM periods WHERE user_id = ? AND date = ?', [idBuffer, date], (err, res) => {
-    if (err) return result(null, err);
-
-    if (res.affectedRows == 0) {
-      return result({ kind: 'not_found' }, null);
+  try {
+    const [rows] = await pool.query('DELETE FROM periods WHERE user_id = ? AND date = ?', [
+      idBuffer,
+      date
+    ]);
+    if (rows.affectedRows == 0) {
+      throw { kind: 'not_found' };
     }
-
-    result(null, res);
-  });
+  } catch (err) {
+    console.log('error: ', err);
+    throw err;
+  }
 };
 
 module.exports = Period;

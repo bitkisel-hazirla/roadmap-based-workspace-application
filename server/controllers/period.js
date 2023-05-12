@@ -11,72 +11,71 @@ exports.create = async (req, res) => {
     user_id: req.body.user_id
   });
 
-  Period.create(period, (err, data) => {
-    if (err) {
-      return res.status(500).send({
-        message: err.message || 'Some error occurred while creating the user'
-      });
-    }
+  try {
+    const data = await Period.create(period);
+
     res.status(201).send(data);
-  });
+  } catch (err) {
+    return res.status(500).send({
+      message: err.message || 'Some error occurred while creating the period'
+    });
+  }
 };
 
 exports.getByUserId = async (req, res) => {
   const userId = req.userId;
 
-  Period.findByUserId(userId, (err, data) => {
-    if (err) {
-      if (err.kind === 'not_found') {
-        return res.status(404).send({
-          message: 'The user has no period record.'
-        });
-      }
-
-      return res.status(500).send({
-        message: err.message
+  try {
+    const data = await Period.findByUserId(userId);
+    res.send(data);
+  } catch (err) {
+    if (err.kind === 'not_found') {
+      return res.status(404).send({
+        message: 'The user has no period record.'
       });
     }
-    res.send(data);
-  });
+    res.status(500).send({
+      message: err.message
+    });
+  }
 };
 
 exports.getByDate = async (req, res) => {
   const userId = req.userId;
   const date = req.params.date;
 
-  Period.findByDate(userId, date, (err, data) => {
-    if (err) {
-      if (err.kind === 'not_found') {
-        return res.status(404).send({
-          message: 'The user has no period record at that date.'
-        });
-      }
-
-      return res.status(500).send({
-        message: err.message
+  try {
+    const data = await Period.findByDate(userId, date);
+    res.send(data);
+  } catch (err) {
+    if (err.kind === 'not_found') {
+      return res.status(404).send({
+        message: 'The user has no period record at that date.'
       });
     }
-    res.send(data);
-  });
+    res.status(500).send({
+      message: err.message
+    });
+  }
 };
 
 exports.getLatestPeriods = async (req, res) => {
   const userId = req.userId;
   const dayBack = req.params.dayBack;
 
-  Period.findLatestPeriods(userId, dayBack, (err, data) => {
-    if (err) {
-      if (err.kind === 'not_found') {
-        return res.status(404).send({
-          message: 'The user has no period record between provided dates.'
-        });
-      }
-      return res.status(500).send({
-        message: err.message
+  try {
+    const data = await Period.findLatestPeriods(userId, dayBack);
+    res.send(data);
+  } catch (err) {
+    if (err.kind === 'not_found') {
+      return res.status(404).send({
+        message: 'The user has no period record between provided dates.'
       });
     }
-    res.send(data);
-  });
+    return res.status(500).send({
+      message: err.message
+    });
+  }
 };
 
 exports.update = async (req, res) => {
@@ -86,33 +85,33 @@ exports.update = async (req, res) => {
   if (!req.body) {
     return res.status(400).send({ message: 'Content can not be empty!' });
   }
-  Period.update(userId, period, (err, data) => {
-    if (err) {
-      if (err.kind === 'not_found') {
-        return res.status(404).send({
-          message: `Period not found for user ${userId} for today.`
-        });
-      }
 
-      return res.status(500).send({
-        message: err.message || 'Error updating period.'
+  try {
+    const data = await Period.update(userId, period);
+    res.send(data);
+  } catch (err) {
+    if (err.kind === 'not_found') {
+      return res.status(404).send({
+        message: `Period not found for user ${userId} for today.`
       });
     }
-    res.send(data);
-  });
+
+    return res.status(500).send({
+      message: err.message || 'Error updating period.'
+    });
+  }
 };
 
 exports.delete = async (req, res) => {
   const userId = req.userId;
   const date = req.params.date;
 
-  Period.delete(userId, date, (err, data) => {
-    if (err) {
-      res.status(500).send({
-        message: err.message
-      });
-      return;
-    }
+  try {
+    await Period.delete(userId, date);
     res.send({ message: 'User is deleted successfully.' });
-  });
+  } catch (err) {
+    return res.status(500).send({
+      message: err.message
+    });
+  }
 };

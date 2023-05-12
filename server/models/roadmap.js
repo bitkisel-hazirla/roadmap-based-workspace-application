@@ -4,74 +4,70 @@ const crypto = require('crypto-js');
 const Roadmap = function (roadmap) {
   this.title = roadmap.title;
   this.description = roadmap.description;
+  this.parent_id = roadmap.parent_id;
 };
 
-Roadmap.create = async (newRoadmap, result) => {
+Roadmap.create = async (newRoadmap) => {
   const id = crypto.lib.WordArray.random(16).toString();
   const roadmap = { ...newRoadmap, id };
-  pool.query('INSERT INTO roadmaps SET ?', roadmap, (err, res) => {
-    if (err) {
-      console.log('error: ', err);
-      result(err, null);
-      return;
-    }
-    result(null, { id, ...newRoadmap });
-  });
+  try {
+    await pool.query('INSERT INTO roadmaps SET ?', [roadmap]);
+    return { id, ...newRoadmap };
+  } catch (err) {
+    console.log('error: ', err);
+    throw err;
+  }
 };
 
-Roadmap.getAll = (result) => {
-  pool.query('SELECT * FROM roadmaps', (err, res) => {
-    if (err) {
-      console.log('error: ', err);
-      result(null, err);
-      return;
-    }
-
-    result(null, res);
-  });
-};
-
-Roadmap.findById = (id, result) => {
-  const idBuffer = Buffer.alloc(18, id, 'utf-8');
-  pool.query('SELECT * FROM roadmaps WHERE id = ?', idBuffer, (err, res) => {
-    if (err) {
-      console.log('error: ', err);
-      result(err, null);
-
-      return;
-    }
-
-    if (res.length) {
-      const roadmap = {
-        ...res[0],
-        id: res[0].id.toString('utf-8')
+Roadmap.getAll = async () => {
+  try {
+    const [rows] = await pool.query('SELECT * FROM roadmaps');
+    const roadmaps = rows.map((roadmap) => {
+      return {
+        ...roadmap,
+        id: roadmap.id.toString('utf-8')
       };
+    });
 
-      result(null, roadmap);
-      return;
-    }
-
-    result({ kind: 'not_found' }, null);
-  });
+    const count = rows.length;
+    return { count, roadmaps };
+  } catch (err) {
+    console.log('error: ', err);
+    throw err;
+  }
 };
 
-Roadmap.delete = (id, result) => {
+Roadmap.findById = async (id) => {
   const idBuffer = Buffer.alloc(18, id, 'utf-8');
-  pool.query('DELETE FROM roadmaps WHERE id = ?', idBuffer, (err, res) => {
-    if (err) {
-      console.log('error: ', err);
-      result(null, err);
-      return;
+  try {
+    const [rows] = await pool.execute('SELECT * FROM roadmaps WHERE id = ?', [idBuffer]);
+    if (rows.length) {
+      const roadmap = {
+        ...rows[0],
+        id: rows[0].id.toString('utf-8')
+      };
+      return roadmap;
     }
-
-    if (res.affectedRows == 0) {
-      result({ kind: 'not_found' }, null);
-      return;
-    }
-
-    console.log('deleted roadmap with id: ', id);
-    result(null, res);
-  });
+    throw { kind: 'not_found' };
+  } catch (err) {
+    console.log('error: ', err);
+    throw err;
+  }
 };
 
+Roadmap.delete = async (id) => {
+  const idBuffer = Buffer.alloc(18, id, 'utf-8');
+
+  try {
+    const [result] = await pool.execute('DELETE FROM roadmaps WHERE id = ?', [idBuffer]);
+    if (result.affectedRows == 0) {
+      throw { kind: 'not_found' };
+    }
+    console.log('deleted roadmap with id: ', id);
+    return result;
+  } catch (err) {
+    console.log('error: ', err);
+    throw err;
+  }
+};
 module.exports = Roadmap;

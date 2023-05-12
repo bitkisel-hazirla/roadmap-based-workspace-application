@@ -9,132 +9,122 @@ const User = function (user) {
   this.date_of_birth = user.date_of_birth;
 };
 
-User.create = async (newUser, result) => {
+User.create = async (newUser) => {
   const id = crypto.lib.WordArray.random(16).toString();
   const user = { ...newUser, id };
-  pool.query('INSERT INTO users SET ?', user, (err, res) => {
-    if (err) {
-      console.log('error: ', err);
-      result(err, null);
-      return;
-    }
-    console.log('created user: ', { id, ...newUser, password: undefined });
-    result(null, { id, ...newUser, password: undefined });
-  });
+  try {
+    await pool.query('INSERT INTO users SET ?', user);
+    return { id, ...newUser, password: undefined };
+  } catch (err) {
+    console.log('error: ', err);
+    throw err;
+  }
 };
 
-User.findByEmail = (email, result) => {
-  pool.query('SELECT * FROM users WHERE email = ?', email, (err, res) => {
-    if (err) {
-      return result(err, null);
+User.findByEmail = async (email) => {
+  try {
+    const [rows] = await pool.execute('SELECT * FROM users WHERE email = ?', [email]);
+    if (rows.length) {
+      return rows[0];
     }
-
-    if (res.length) {
-      return result(null, res[0]);
-    }
-
-    result({ kind: 'not_found' }, null);
-  });
+    return { kind: 'not_found' };
+  } catch (err) {
+    console.log('error: ', err);
+    throw err;
+  }
 };
 
-User.findByUsername = (username, result) => {
-  pool.query('SELECT * FROM users WHERE username = ?', username, (err, res) => {
-    if (err) {
-      return result(err, null);
+User.findByUsername = async (username) => {
+  try {
+    const [rows] = await pool.execute('SELECT * FROM users WHERE username = ?', [username]);
+    if (rows.length) {
+      console.log('found the user: ', rows[0]);
+      return rows[0];
     }
-
-    if (res.length) {
-      console.log('found the user: ', res[0]);
-      return result(null, res[0]);
-    }
-
-    result({ kind: 'not_found' }, null);
-  });
+    return { kind: 'not_found' };
+  } catch (err) {
+    console.log('error: ', err);
+    throw err;
+  }
 };
 
-User.findById = (id, result) => {
+User.findById = async (id) => {
   const idBuffer = Buffer.alloc(18, id, 'utf-8');
 
-  pool.query('SELECT * FROM users WHERE id = ?', idBuffer, (err, res) => {
-    if (err) {
-      console.log('error: ', err);
-      result(err, null);
+  try {
+    const [rows] = await pool.execute('SELECT * FROM users WHERE id = ?', [idBuffer]);
 
-      return;
-    }
-
-    if (res.length) {
+    if (rows.length) {
       const user = {
-        ...res[0],
-        id: res[0].id.toString('utf-8')
+        ...rows[0],
+        id: rows[0].id.toString('utf-8')
       };
 
       delete user.password;
 
-      result(null, user);
-      return;
+      return user;
     }
-
-    result({ kind: 'not_found' }, null);
-  });
+    throw { kind: 'not_found' };
+  } catch (err) {
+    console.log('error: ', err);
+    throw err;
+  }
 };
 
-User.getAll = (result) => {
-  pool.query('SELECT * FROM users', (err, res) => {
-    if (err) {
-      console.log('error: ', err);
-      result(null, err);
-      return;
-    }
+User.getAll = async () => {
+  try {
+    const [rows] = await pool.query('SELECT * FROM users');
 
-    console.log('users: ', { ...res, password: undefined });
-    result(null, { ...res, password: undefined });
-  });
+    if (rows.length) {
+      const data = rows.map((user) => {
+        user.id = user.id.toString('utf8');
+        user.password = undefined;
+        return user;
+      });
+      const count = rows.length;
+      return { count, ...data };
+    }
+  } catch (err) {
+    console.log('error: ', err);
+    throw err;
+  }
 };
 
-User.updateById = (id, user, result) => {
+User.updateById = async (id, user) => {
   const idBuffer = Buffer.alloc(18, id, 'utf-8');
 
-  pool.query(
-    'UPDATE users SET name = ?, date_of_birth = ?, roadmap_id = ? WHERE id = ?',
-    [user.name, user.date_of_birth, user.roadmap_id, idBuffer],
-    (err, res) => {
-      if (err) {
-        console.log('error: ', err);
-        result(null, err);
-        return;
-      }
+  try {
+    const [rows] = await pool.execute(
+      'UPDATE users SET name = ?, date_of_birth = ?, roadmap_id = ? WHERE id = ?',
+      [user.name, user.date_of_birth, user.roadmap_id, idBuffer]
+    );
 
-      if (res.affectedRows == 0) {
-        console.log(res);
-        result({ kind: 'not_found' }, null);
-        return;
-      }
-
-      console.log('updated user: ', { id: id, ...user });
-      result(null, { id: id, ...user });
+    if (rows.affectedRows == 0) {
+      throw { kind: 'not_found' };
     }
-  );
+
+    return { id, ...user };
+  } catch (err) {
+    console.log('error: ', err);
+    throw err;
+  }
 };
 
-User.delete = (id, result) => {
+User.delete = async (id) => {
   const idBuffer = Buffer.alloc(18, id, 'utf-8');
 
-  pool.query('DELETE FROM users WHERE id = ?', idBuffer, (err, res) => {
-    if (err) {
-      console.log('error: ', err);
-      result(null, err);
-      return;
-    }
-
-    if (res.affectedRows == 0) {
-      result({ kind: 'not_found' }, null);
-      return;
+  try {
+    const [rows] = await pool.query('DELETE FROM users WHERE id = ?', [idBuffer]);
+    if (rows.affectedRows == 0) {
+      throw { kind: 'not_found' };
     }
 
     console.log('deleted user with id: ', id);
-    result(null, res);
-  });
+    return rows;
+  } catch (err) {
+    console.log('error: ', err);
+    throw err;
+  }
 };
 
 module.exports = User;

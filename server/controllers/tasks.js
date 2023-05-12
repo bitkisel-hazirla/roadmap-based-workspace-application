@@ -14,47 +14,46 @@ exports.create = async (req, res) => {
     userId: req.body.userId
   });
 
-  Task.create(task, (err, data) => {
-    if (err) {
-      return res.status(500).send({
-        message: err.message || 'Some error occurred while creating the Task.'
-      });
-    }
-    res.send(data);
-  });
+  try {
+    const data = await Task.create(task);
+
+    res.status(201).send(data);
+  } catch (err) {
+    return res.status(500).send({
+      message: err.message || 'Some error occurred while creating the Task.'
+    });
+  }
 };
 
-exports.findById = (req, res) => {
-  Task.getById(req.params.id, (err, data) => {
-    if (err) {
-      if (err.kind === 'not_found') {
-        res.status(404).send({
-          message: `There is no task with id ${req.params.id}`
-        });
-        return;
-      }
-      res.status(500).send({
-        message: err.message
+exports.findById = async (req, res) => {
+  try {
+    const data = await Task.getById(req.params.id);
+
+    res.status(200).send(data);
+  } catch (err) {
+    if (err.kind === 'not_found') {
+      return res.status(404).send({
+        message: `There is no task with id ${req.params.id}`
       });
-      return;
     }
-    res.send(data);
-  });
+    res.status(500).send({
+      message: err.message
+    });
+  }
 };
 
-exports.getAll = (req, res) => {
-  Task.getAll((err, data) => {
-    if (err) {
-      res.status(500).send({
-        message: err.message
-      });
-      return;
-    }
-    res.send(data);
-  });
+exports.getAll = async (req, res) => {
+  try {
+    const data = await Task.getAll();
+    res.status(200).send(data);
+  } catch (err) {
+    res.status(500).send({
+      message: err.message
+    });
+  }
 };
 
-exports.updateById = (req, res) => {
+exports.updateById = async (req, res) => {
   if (!req.body) {
     res.status(400).send({
       message: 'Content cannot be empty!'
@@ -62,37 +61,33 @@ exports.updateById = (req, res) => {
     return;
   }
 
-  Task.updateById(req.params.id, new Task(req.body), (err, data) => {
-    if (err) {
-      if (err.kind === 'not_found') {
-        res.status(404).send({
-          message: `There is no user with id ${req.params.id}`
-        });
-        return;
-      }
-      res.status(500).send({
-        message: err.message
-      });
-      return;
-    }
+  try {
+    const data = await Task.updateById(req.params.id, new Task(req.body));
     res.send(data);
-  });
+  } catch (err) {
+    if (err.kind === 'not_found') {
+      return res.status(404).send({
+        message: `There is no user with id ${req.params.id}`
+      });
+    }
+    res.status(500).send({
+      message: err.message
+    });
+  }
 };
 
-exports.delete = (req, res) => {
-  Task.delete(req.params.id, (err, data) => {
-    if (err) {
-      if (err.kind === 'not_found') {
-        res.status(404).send({
-          message: `There is no task with id ${req.params.id}`
-        });
-        return;
-      }
-      res.status(500).send({
-        message: err.message
-      });
-      return;
-    }
+exports.delete = async (req, res) => {
+  try {
+    await Task.delete(req.params.id);
     res.status(200).send({ message: 'Successfully deleted.' });
-  });
+  } catch (err) {
+    if (err.kind === 'not_found') {
+      return res.status(404).send({
+        message: `There is no task with id ${req.params.id}`
+      });
+    }
+    res.status(500).send({
+      message: err.message
+    });
+  }
 };

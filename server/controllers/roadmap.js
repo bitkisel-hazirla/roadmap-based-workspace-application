@@ -7,64 +7,59 @@ exports.create = async (req, res) => {
 
   const roadmap = new Roadmap({
     title: req.body.title,
-    description: req.body.description
+    description: req.body.description,
+    parent_id: req.body.parent_id
   });
 
-  Roadmap.create(roadmap, (err, data) => {
-    if (err) {
-      return res.status(500).send({
-        message: err.message || 'Some error occurred while creating the roadmap.'
-      });
-    }
-
+  try {
+    const data = await Roadmap.create(roadmap);
     res.status(201).send(data);
-  });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || 'Some error occurred while creating the roadmap.'
+    });
+  }
 };
 
-exports.getAll = (req, res) => {
-  Roadmap.getAll((err, data) => {
-    if (err) {
-      res.status(500).send({
-        message: err.message
-      });
-      return;
-    }
-    res.send(data);
-  });
+exports.getAll = async (req, res) => {
+  try {
+    const data = await Roadmap.getAll();
+    res.status(200).send(data);
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || 'Some error occurred while creating the roadmap.'
+    });
+  }
 };
 
-exports.findById = (req, res) => {
-  Roadmap.findById(req.params.id, (err, data) => {
-    if (err) {
-      if (err.kind === 'not_found') {
-        res.status(404).send({
-          message: `There is no roadmap with id ${req.params.id}`
-        });
-        return;
-      }
-      res.status(500).send({
-        message: err.message
+exports.findById = async (req, res) => {
+  try {
+    const data = await Roadmap.findById(req.params.id);
+    res.status(200).send(data);
+  } catch (err) {
+    if (err.kind === 'not_found') {
+      return res.status(404).send({
+        message: `There is no roadmap with id ${req.params.id}`
       });
-      return;
     }
-    res.send(data);
-  });
+    res.status(500).send({
+      message: err.message || 'Some error occurred while retrieving roadmap.'
+    });
+  }
 };
 
-exports.delete = (req, res) => {
-  Roadmap.delete(req.params.id, (err, data) => {
-    if (err) {
-      if (err.kind === 'not_found') {
-        res.status(404).send({
-          message: `There is no roadmap with id ${req.params.id}`
-        });
-        return;
-      }
-      res.status(500).send({
-        message: err.message
-      });
-      return;
-    }
+exports.delete = async (req, res) => {
+  try {
+    await Roadmap.delete(req.params.id);
     res.status(200).send({ message: 'Successfully deleted.' });
-  });
+  } catch (err) {
+    if (err.kind === 'not_found') {
+      return res.status(404).send({
+        message: `There is no roadmap with id ${req.params.id}`
+      });
+    }
+    res.status(500).send({
+      message: err.message
+    });
+  }
 };
