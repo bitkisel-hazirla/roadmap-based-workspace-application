@@ -10,12 +10,17 @@ app.use(cors());
 app.use(express.json());
 app.use(routes);
 
-pool.getConnection(function (err, connection) {
-  if (err) throw err;
-  console.log('Connected to the MySQL database pool!');
-  connection.release();
-});
+(async () => {
+  try {
+    const connection = await pool.getConnection();
+    console.log('Connected to the MySQL database pool!');
+    connection.release();
+  } catch (err) {
+    console.error('Error connecting to the database pool', err);
+    process.exit(1);
+  }
 
-app.listen(port, () => {
-  console.log('Server is up on port ' + port);
-});
+  app.listen(port, () => {
+    console.log('Server is up on port ' + port);
+  });
+})();
