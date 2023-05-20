@@ -1,8 +1,9 @@
+import React from 'react';
+import { Link } from 'react-scroll';
 import landing from '../../assets/images/landing.jpeg';
 import landing2 from '../../assets/images/landing2.jpg';
 import landing3 from '../../assets/images/landing3.png';
 import { AuthButton } from '../../components/UI/AuthButton';
-import { Link } from 'react-scroll';
 
 export const Home = () => {
   return (
