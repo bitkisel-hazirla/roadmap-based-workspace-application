@@ -1,6 +1,7 @@
 import { call, all, put, takeLatest } from 'redux-saga/effects';
 import { API } from '../api/index';
 import { setUser } from '../reducers/userReducer';
+import { edit } from '../reducers/taskReducer';
 
 function * fetchUser () {
   try {
@@ -16,8 +17,8 @@ function * fetchUser () {
 function * fetchTasks () {
   try {
     const response = yield call(API.fetchTasks);
-    const user = response.tasks;
-    yield put(setUser(user));
+    const tasks = response.tasks;
+    yield put(edit(tasks));
   } catch (e) {
     console.log(e);
   }
@@ -28,5 +29,5 @@ function * userSaga () {
 }
 
 export default function * rootSaga () {
-  yield all([userSaga()]);
+  yield all([userSaga(), fetchTasks()]);
 }
