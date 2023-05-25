@@ -10,13 +10,13 @@ import { Roadmap } from './pages/Roadmap';
 const router = createBrowserRouter([
   {
     path: '/',
+    element: <Home/>
+  },
+  {
+    path: '/',
     element: <RootLayout />,
     children: [
-      {
-        path: '/',
-        element: <Home/>
 
-      },
       {
         path: 'tasks',
         element: <Table />
@@ -26,10 +26,6 @@ const router = createBrowserRouter([
         element: <Timer />
       }
     ]
-  },
-  {
-    path: '/',
-    element: <Home/>
   },
   {
     path: '/login',
