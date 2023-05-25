@@ -9,7 +9,8 @@ const Roadmap = function (roadmap) {
 Roadmap.create = async (newRoadmap, result) => {
   const id = crypto.lib.WordArray.random(16).toString();
   const roadmap = { ...newRoadmap, id };
-  pool.query('INSERT INTO roadmaps SET ?', roadmap, (err, res) => {
+  const query = 'INSERT INTO roadmaps SET ?';
+  pool.query(query, [roadmap], (err, res) => {
     if (err) {
       console.log('error: ', err);
       result(err, null);
@@ -33,7 +34,8 @@ Roadmap.getAll = (result) => {
 
 Roadmap.findById = (id, result) => {
   const idBuffer = Buffer.alloc(18, id, 'utf-8');
-  pool.query('SELECT * FROM roadmaps WHERE id = ?', idBuffer, (err, res) => {
+  const query = 'SELECT * FROM roadmaps WHERE id = ?'
+  pool.query(query, [idBuffer], (err, res) => {
     if (err) {
       console.log('error: ', err);
       result(err, null);
@@ -57,7 +59,8 @@ Roadmap.findById = (id, result) => {
 
 Roadmap.delete = (id, result) => {
   const idBuffer = Buffer.alloc(18, id, 'utf-8');
-  pool.query('DELETE FROM roadmaps WHERE id = ?', idBuffer, (err, res) => {
+  const query = 'DELETE FROM roadmaps WHERE id = ?'
+  pool.query(query, [idBuffer], (err, res) => {
     if (err) {
       console.log('error: ', err);
       result(null, err);

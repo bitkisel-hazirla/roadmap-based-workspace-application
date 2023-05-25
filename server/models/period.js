@@ -10,7 +10,8 @@ const Period = function (period) {
 Period.create = async (newPeriod, result) => {
   const id = crypto.lib.WordArray.random(16).toString();
   const period = { ...newPeriod, id };
-  pool.query('INSERT INTO periods SET ?', period, (err, res) => {
+  const query = 'INSERT INTO periods SET ?'
+  pool.query(query, [period], (err, res) => {
     if (err) return result(err, null);
     console.log('created period: ', { id, ...newPeriod });
     result(null, { id, ...newPeriod });
@@ -19,8 +20,8 @@ Period.create = async (newPeriod, result) => {
 
 Period.findByUserId = (user_id, result) => {
   const idBuffer = Buffer.alloc(18, user_id, 'utf-8');
-
-  pool.query('SELECT * FROM periods WHERE user_id = ?', idBuffer, (err, res) => {
+  const query = 'SELECT * FROM periods WHERE user_id = ?'
+  pool.query(query, [idBuffer], (err, res) => {
     if (err) {
       return result(err, null);
     }
@@ -41,9 +42,8 @@ Period.findByUserId = (user_id, result) => {
 
 Period.findByDate = (user_id, date, result) => {
   const idBuffer = Buffer.alloc(18, user_id, 'utf-8');
-
-  pool.query(
-    'SELECT * FROM periods WHERE user_id = ? AND date = ?',
+  const query = 'SELECT * FROM periods WHERE user_id = ? AND date = ?'
+  pool.query(query,
     [idBuffer, date],
     (err, res) => {
       if (err) {
@@ -69,9 +69,8 @@ Period.findLatestPeriods = (user_id, daysBack, result) => {
   const today = new Date();
   const startDate = new Date(today.getTime() - daysBack * 24 * 60 * 60 * 1000);
   const idBuffer = Buffer.alloc(18, user_id, 'utf-8');
-
-  pool.query(
-    'SELECT * FROM periods WHERE user_id = ? AND date BETWEEN ? AND ?',
+  const query = 'SELECT * FROM periods WHERE user_id = ? AND date BETWEEN ? AND ?'
+  pool.query(query,
     [idBuffer, startDate, today],
     (err, res) => {
       if (err) {
@@ -96,9 +95,8 @@ Period.findLatestPeriods = (user_id, daysBack, result) => {
 Period.update = (user_id, updatedPeriod, result) => {
   const idBuffer = Buffer.alloc(18, user_id, 'utf-8');
   const today = new Date().toISOString().slice(0, 10);
-
-  pool.query(
-    'UPDATE periods SET period = ? WHERE user_id = ? AND date = ?',
+  const query = 'UPDATE periods SET period = ? WHERE user_id = ? AND date = ?'
+  pool.query(query,
     [updatedPeriod, idBuffer, today],
     (err, res) => {
       if (err) return result(err, null);
@@ -117,8 +115,8 @@ Period.update = (user_id, updatedPeriod, result) => {
 
 Period.delete = (user_id, date, result) => {
   const idBuffer = Buffer.alloc(18, user_id, 'utf-8');
-
-  pool.query('DELETE FROM periods WHERE user_id = ? AND date = ?', [idBuffer, date], (err, res) => {
+  const query = 'DELETE FROM periods WHERE user_id = ? AND date = ?'
+  pool.query(query, [idBuffer, date], (err, res) => {
     if (err) return result(null, err);
 
     if (res.affectedRows == 0) {
