@@ -12,7 +12,8 @@ const User = function (user) {
 User.create = async (newUser, result) => {
   const id = crypto.lib.WordArray.random(16).toString();
   const user = { ...newUser, id };
-  pool.query('INSERT INTO users SET ?', user, (err, res) => {
+  const query = 'INSERT INTO users SET ?'
+  pool.query(query, [user], (err, res) => {
     if (err) {
       console.log('error: ', err);
       result(err, null);
@@ -24,7 +25,8 @@ User.create = async (newUser, result) => {
 };
 
 User.findByEmail = (email, result) => {
-  pool.query('SELECT * FROM users WHERE email = ?', email, (err, res) => {
+  const query = 'SELECT * FROM users WHERE email = ?'
+  pool.query(query, email, (err, res) => {
     if (err) {
       return result(err, null);
     }
@@ -38,7 +40,8 @@ User.findByEmail = (email, result) => {
 };
 
 User.findByUsername = (username, result) => {
-  pool.query('SELECT * FROM users WHERE username = ?', username, (err, res) => {
+  const query = 'SELECT * FROM users WHERE username = ?'
+  pool.query(query, [username], (err, res) => {
     if (err) {
       return result(err, null);
     }
@@ -54,8 +57,8 @@ User.findByUsername = (username, result) => {
 
 User.findById = (id, result) => {
   const idBuffer = Buffer.alloc(18, id, 'utf-8');
-
-  pool.query('SELECT * FROM users WHERE id = ?', idBuffer, (err, res) => {
+  const query = 'SELECT * FROM users WHERE id = ?'
+  pool.query(query, idBuffer, (err, res) => {
     if (err) {
       console.log('error: ', err);
       result(err, null);
@@ -80,7 +83,8 @@ User.findById = (id, result) => {
 };
 
 User.getAll = (result) => {
-  pool.query('SELECT * FROM users', (err, res) => {
+  const query = 'SELECT * FROM users'
+  pool.query(query, (err, res) => {
     if (err) {
       console.log('error: ', err);
       result(null, err);
@@ -94,9 +98,8 @@ User.getAll = (result) => {
 
 User.updateById = (id, user, result) => {
   const idBuffer = Buffer.alloc(18, id, 'utf-8');
-
-  pool.query(
-    'UPDATE users SET name = ?, date_of_birth = ?, roadmap_id = ? WHERE id = ?',
+  const query = 'UPDATE users SET name = ?, date_of_birth = ?, roadmap_id = ? WHERE id = ?'
+  pool.query(query,
     [user.name, user.date_of_birth, user.roadmap_id, idBuffer],
     (err, res) => {
       if (err) {
@@ -111,16 +114,16 @@ User.updateById = (id, user, result) => {
         return;
       }
 
-      console.log('updated user: ', { id: id, ...user });
-      result(null, { id: id, ...user });
+      console.log('updated user: ', { id, ...user });
+      result(null, { id, ...user });
     }
   );
 };
 
 User.delete = (id, result) => {
   const idBuffer = Buffer.alloc(18, id, 'utf-8');
-
-  pool.query('DELETE FROM users WHERE id = ?', idBuffer, (err, res) => {
+  const query = 'DELETE FROM users WHERE id = ?'
+  pool.query(query, [idBuffer], (err, res) => {
     if (err) {
       console.log('error: ', err);
       result(null, err);
