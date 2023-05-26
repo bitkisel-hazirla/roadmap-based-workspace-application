@@ -10,13 +10,12 @@ import { Roadmap } from './pages/Roadmap';
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Home/>
+    element: <Home />
   },
   {
     path: '/',
     element: <RootLayout />,
     children: [
-
       {
         path: 'tasks',
         element: <Table />
@@ -29,11 +28,11 @@ const router = createBrowserRouter([
   },
   {
     path: '/login',
-    element: <Authentication />
+    element: <Authentication initialPage={'login'} />
   },
   {
     path: '/signup',
-    element: <Authentication />
+    element: <Authentication initialPage={'signup'} />
   },
   {
     path: '/roadmap',
