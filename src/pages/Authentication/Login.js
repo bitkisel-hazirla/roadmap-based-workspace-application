@@ -5,7 +5,7 @@ import axios from 'axios';
 import { PasswordInput } from '../../components/UI/PasswordInput';
 import { AuthButton } from '../../components/UI/AuthButton';
 
-const SignIn = () => {
+const Login = () => {
   const [formValues, setFormValues] = useState({
     username: '',
     password: '',
@@ -75,6 +75,6 @@ const SignIn = () => {
       </form>
     </div>
   );
-}
+};
 
-export { SignIn };
+export { Login };
