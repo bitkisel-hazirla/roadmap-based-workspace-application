@@ -10,7 +10,6 @@ exports.create = async (req, res) => {
 
   try {
     const emailExist = await User.findByEmail(req.body.email);
-    console.log(emailExist);
     if (!emailExist === undefined) {
       return res.status(409).send({
         message: 'The email is in use.'
