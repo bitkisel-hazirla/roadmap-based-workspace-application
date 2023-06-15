@@ -10,90 +10,86 @@ const Tasks = (tasks) => {
   this.userId = tasks.userId;
 };
 
-Tasks.create = async (newTask, result) => {
+Tasks.create = async (newTask) => {
   const id = crypto.lib.WordArray.random(16).toString();
   const Tasks = { ...newTask, id };
-  pool.query('INSERT INTO Tasks SET ?', Tasks, (err, res) => {
-    if (err) {
-      console.log('error: ', err);
-      result(err, null);
-      return;
-    }
-    console.log('created tasks: ', { id, ...newTask, password: undefined });
-    result(null, { id, ...newTask, password: undefined });
-  });
+  try {
+    await pool.query('INSERT INTO Tasks SET ?', Tasks);
+    return { id, ...newTask };
+  } catch (err) {
+    console.log('error: ', err);
+    throw err;
+  }
 };
 
-Tasks.getAll = (result) => {
-  pool.query('SELECT * FROM Tasks', (err, res) => {
-    if (err) {
-      console.log('error: ', err);
-      result(null, err);
-      return;
+Tasks.getAll = async () => {
+  try {
+    const [rows] = await pool.query('SELECT * FROM Tasks');
+    if (rows.length) {
+      const data = rows.map((user) => {
+        user.id = user.id.toString('utf8');
+        return user;
+      });
+      const count = rows.length;
+      return { count, ...data };
     }
-
-    console.log('Tasks: ', { ...res, password: undefined });
-    result(null, { ...res, password: undefined });
-  });
+  } catch (err) {
+    console.log('error: ', err);
+    throw err;
+  }
 };
 
-Tasks.getById = (id, result) => {
+Tasks.getById = async (id) => {
   const idBuffer = Buffer.alloc(18, id, 'utf-8');
-  pool.query('SELECT * FROM Tasks WHERE id = ?', [idBuffer], (err, res) => {
-    if (err) {
-      console.log('error: ', err);
-      result(null, err);
-      return;
+  try {
+    const [rows] = await pool.execute('SELECT * FROM Tasks WHERE id = ?', [idBuffer]);
+    if (rows.length) {
+      const task = {
+        ...rows[0],
+        id: rows[0].id.toString('utf-8')
+      };
+      return task;
     }
-
-    console.log('Tasks: ', { ...res, password: undefined });
-    result(null, { ...res, password: undefined });
-  });
+    throw { kind: 'not_found' };
+  } catch (err) {
+    console.log('error: ', err);
+    throw err;
+  }
 };
 
-Tasks.updateById = (id, Tasks, result) => {
-  const idBuffer = Buffer.alloc(18, id, 'utf-8');
-
-  pool.query(
-    'UPDATE Tasks SET task = ?, status = ?, priority = ?, end_date = ?, start_date = ? WHERE id = ?',
-    [Tasks.task, Tasks.status, Tasks.priority, Tasks.endDate, Tasks.startDate, idBuffer],
-    (err, res) => {
-      if (err) {
-        console.log('error: ', err);
-        result(null, err);
-        return;
-      }
-
-      if (res.affectedRows === 0) {
-        console.log(res);
-        result({ kind: 'not_found' }, null);
-        return;
-      }
-
-      console.log('updated tasks: ', { id, ...Tasks });
-      result(null, { id, ...Tasks });
-    }
-  );
-};
-
-Tasks.delete = (id, result) => {
+Tasks.updateById = async (id, Tasks) => {
   const idBuffer = Buffer.alloc(18, id, 'utf-8');
 
-  pool.query('DELETE FROM Tasks WHERE id = ?', idBuffer, (err, res) => {
-    if (err) {
-      console.log('error: ', err);
-      result(null, err);
-      return;
-    }
+  try {
+    const [rows] = await pool.execute(
+      'UPDATE Tasks SET task = ?, status = ?, priority = ?, end_date = ?, start_date = ? WHERE id = ?',
+      [Tasks.task, Tasks.status, Tasks.priority, Tasks.endDate, Tasks.startDate, idBuffer]
+    );
 
-    if (res.affectedRows === 0) {
-      result({ kind: 'not_found' }, null);
-      return;
+    if (rows.affectedRows === 0) {
+      throw { kind: 'not_found' };
     }
+    return { id, ...Tasks };
+  } catch (err) {
+    console.log('error: ', err);
+    throw err;
+  }
+};
 
+Tasks.delete = async (id) => {
+  const idBuffer = Buffer.alloc(18, id, 'utf-8');
+
+  try {
+    const [rows] = await pool.query('DELETE FROM Tasks WHERE id = ?', [idBuffer]);
+    if (rows.affectedRows == 0) {
+      throw { kind: 'not_found' };
+    }
     console.log('deleted tasks with id: ', id);
-    result(null, res);
-  });
+    return rows;
+  } catch (err) {
+    console.log('error: ', err);
+    throw err;
+  }
 };
 
 module.exports = Tasks;
